@@ -1,11 +1,8 @@
 from distutils.core import setup
 
 
-def readme():
-    """ print long description """
-    with open('README.md') as f:
-        long_descrip = f.read()
-    return long_descrip
+with open('README.md') as f:
+    long_description = f.read()
 
 
 setup(
@@ -14,8 +11,8 @@ setup(
     version='0.0.2',
     license='GPL-3.0',
     description='A wrapper for the Qlik Sense Enterprise SaaS APIs.',
-    long_description=readme(),
-    long_description_content_type="text/markdown",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Daniel Pilla',
     author_email='daniel.b.pilla@gmail.com',
     url='https://github.com/eapowertools/qsaas',
