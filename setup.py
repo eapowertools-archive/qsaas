@@ -11,7 +11,7 @@ def readme():
 setup(
     name='qsaas',
     packages=['qsaas'],
-    version='0.0.1',
+    version='0.0.2',
     license='GPL-3.0',
     description='A wrapper for the Qlik Sense Enterprise SaaS APIs.',
     long_description=readme(),
@@ -19,7 +19,7 @@ setup(
     author='Daniel Pilla',
     author_email='daniel.b.pilla@gmail.com',
     url='https://github.com/eapowertools/qsaas',
-    download_url='https://github.com/eapowertools/qsaas/archive/v0.0.1-alpha.tar.gz',
+    download_url='https://github.com/eapowertools/qsaas/archive/v0.0.2-alpha.tar.gz',
     keywords=['Qlik', 'API', 'REST', 'Sense', 'QSAAS', 'QSESAAS'],
     install_requires=[
         'requests',
