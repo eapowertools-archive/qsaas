@@ -8,7 +8,7 @@ setup(
     author='Daniel Pilla',
     author_email='daniel.b.pilla@gmail.com',
     url='https://github.com/eapowertools/qsaas',
-    download_url='https://github.com/eapowertools/qsaas/archive/v_001.tar.gz',
+    download_url='https://github.com/eapowertools/qsaas/archive/v0.0.1-alpha.tar.gz',
     keywords=['Qlik', 'API', 'REST', 'WRAPPER', 'QSAAS', 'QSESAAS'],
     install_requires=[
         'requests',
