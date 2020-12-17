@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 
 with open('README.md') as f:
@@ -8,7 +8,7 @@ with open('README.md') as f:
 setup(
     name='qsaas',
     packages=['qsaas'],
-    version='0.0.3',
+    version='0.0.4',
     license='GPL-3.0',
     description='A wrapper for the Qlik Sense Enterprise SaaS APIs.',
     long_description=long_description,
@@ -16,7 +16,7 @@ setup(
     author='Daniel Pilla',
     author_email='daniel.b.pilla@gmail.com',
     url='https://github.com/eapowertools/qsaas',
-    download_url='https://github.com/eapowertools/qsaas/archive/v0.0.3-alpha.tar.gz',
+    download_url='https://github.com/eapowertools/qsaas/archive/v0.0.4-alpha.tar.gz',
     keywords=['Qlik', 'API', 'REST', 'Sense', 'QSAAS', 'QSESAAS'],
     install_requires=[
         'requests',
