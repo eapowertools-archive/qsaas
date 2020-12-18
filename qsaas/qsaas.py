@@ -22,7 +22,7 @@ class Tenant:
 
     OR provide a path to a config.json file that has the structure:
         {
-            "api_key": "<API_KEY",
+            "api_key": "<API_KEY>",
             "tenant_fqdn": "<TENANT>.<REGION>.qlikcloud.com",
             "tenant_id": "<TENANT_ID>"
         }
@@ -60,7 +60,7 @@ class Tenant:
             raise Exception(response)
 
         self.limit = 100
-        self.suppressWarnings = False
+        self.suppress_warnings = False
 
     def get(self, endpoint, params={}):
         """
@@ -233,11 +233,6 @@ class Tenant:
         endpoint (str), exclude api/{version}
         body (dict), occasionally requires manual json.dumps()
 
-        Example Usage
-        --------------------
-        Example:
-            put('apps/' + '<AppId>' + '/owner',
-                json.dumps({"ownerId": '<UserId>'}))
         """
 
         return self._generic('patch', endpoint, body)
@@ -613,14 +608,14 @@ class Tenant:
         else:
             raise Exception(r.status_code, r.text)
         s.close()
-        if any([flag_400, flag_500]) and not self.suppressWarnings:
+        if any([flag_400, flag_500]) and not self.suppress_warnings:
             if flag_400 and not flag_500:
                 wm = 'Payload required being wrapped in an array, '
                 wm += 'and then resulted in a successful ' + method
                 wm += ' call. To avoid this warning in the future, '
                 wm += ' send your payload to "' + endpoint + '" in '
                 wm += 'an array, or suppress warnings using '
-                wm += 'suppressWarnings = True'
+                wm += 'suppress_warnings = True'
                 warnings.warn(wm)
             else:
                 wm = 'Payload required being dumped to json using '
@@ -628,6 +623,6 @@ class Tenant:
                 wm += 'call. To avoid this warning in the future, '
                 wm += method + ' send your payload to "' + endpoint + '"'
                 wm += ' in an array, or suppress warnings using '
-                wm += 'suppressWarnings = True'
+                wm += 'suppress_warnings = True'
                 warnings.warn(wm)
         return result
