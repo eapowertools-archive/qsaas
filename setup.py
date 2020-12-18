@@ -8,7 +8,7 @@ with open('README.md') as f:
 setup(
     name='qsaas',
     packages=['qsaas'],
-    version='1.0.0',
+    version='1.0.1',
     license='GPL-3.0',
     description='A wrapper for the Qlik Sense Enterprise SaaS APIs.',
     long_description=long_description,
@@ -16,7 +16,7 @@ setup(
     author='Daniel Pilla',
     author_email='daniel.b.pilla@gmail.com',
     url='https://github.com/eapowertools/qsaas',
-    download_url='https://github.com/eapowertools/qsaas/archive/v1.0.0.tar.gz',
+    download_url='https://github.com/eapowertools/qsaas/archive/v1.0.1.tar.gz',
     keywords=['Qlik', 'API', 'REST', 'Sense', 'QSAAS', 'QSESAAS'],
     install_requires=[
         'requests',
@@ -25,7 +25,7 @@ setup(
     ],
     python_requires='>=3.5',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3.5',
