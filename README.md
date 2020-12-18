@@ -6,7 +6,7 @@ Developers -- familiarity with the [Qlik Sense Enterprise APIs](https://qlik.dev
 
 ### High-level benefits:
 1. Automatic pagination on GETs, returning all results.
-2. Ability to asynchronously make POSTs, PUTs, and PATCHs, where one can input the amount of threads you'd like (default is 10), dramatically increasing processing time.
+2. Ability to asynchronously make POSTs, PUTs, and PATCHs, where one can input the amount of threads you'd like (default is 10), dramatically decreasing processing time.
 3. Ease of establishing and managing connections to multiple tenants.
 4. Ability to connect to any API endpoint.
 
