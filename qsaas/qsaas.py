@@ -179,15 +179,15 @@ class Tenant:
         endpoint (str), exclude api/{version}
         body (dict), occasionally requires manual json.dumps()
 
+        Optional parameters
+        --------------------
+        params (dict)
+
         Example Usage
         --------------------
         Example:
             post('apps/' + '<AppId>' + '/publish',
                  {"spaceId": '<SpaceId>'})
-
-        Optional parameters
-        --------------------
-        params (dict)
         """
 
         return self._generic('post', endpoint, body, params)
@@ -210,15 +210,15 @@ class Tenant:
         endpoint (str), exclude api/{version}
         body (dict), occasionally requires manual json.dumps()
 
+        Optional parameters
+        --------------------
+        params (dict)
+
         Example Usage
         --------------------
         Example:
             put('apps/' + '<AppId>' + '/owner',
                 json.dumps({"ownerId": '<UserId>'}))
-
-        Optional parameters
-        --------------------
-        params (dict)
         """
 
         return self._generic('put', endpoint, body)
