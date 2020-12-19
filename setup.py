@@ -10,7 +10,7 @@ setup(
     packages=['qsaas'],
     version='1.0.2',
     license='GPL-3.0',
-    description='A wrapper for the Qlik Sense Enterprise SaaS APIs.',
+    description='A Python wrapper for the Qlik Sense Enterprise SaaS APIs.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Daniel Pilla',

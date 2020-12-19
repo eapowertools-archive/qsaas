@@ -16,9 +16,9 @@ class Tenant:
     Mandatory parameters
     --------------------
     Either provide all of the below named parameters:
-        api_key : an api key for the tenant
-        tenant : the fqdn of the tenant, e.g. test.us.qlikcloud.com
-        tenant_id : the tenant id of the tenant, found in "Settings"
+        api_key: an api key for the tenant
+        tenant: the fqdn of the tenant, e.g. test.us.qlikcloud.com
+        tenant_id: the tenant id of the tenant, found in "Settings"
 
     OR provide a path to a config.json file that has the structure:
         {
