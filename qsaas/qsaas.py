@@ -161,7 +161,7 @@ class Tenant:
         s.close()
         return result
 
-    def post(self, endpoint, body):
+    def post(self, endpoint, body, params={}):
         """
         Description
         --------------------
@@ -184,11 +184,15 @@ class Tenant:
         Example:
             post('apps/' + '<AppId>' + '/publish',
                  {"spaceId": '<SpaceId>'})
+
+        Optional parameters
+        --------------------
+        params (dict)
         """
 
-        return self._generic('post', endpoint, body)
+        return self._generic('post', endpoint, body, params)
 
-    def put(self, endpoint, body):
+    def put(self, endpoint, body, params={}):
         """
         Description
         --------------------
@@ -211,11 +215,15 @@ class Tenant:
         Example:
             put('apps/' + '<AppId>' + '/owner',
                 json.dumps({"ownerId": '<UserId>'}))
+
+        Optional parameters
+        --------------------
+        params (dict)
         """
 
         return self._generic('put', endpoint, body)
 
-    def patch(self, endpoint, body):
+    def patch(self, endpoint, body, params={}):
         """
         Description
         --------------------
@@ -233,11 +241,14 @@ class Tenant:
         endpoint (str), exclude api/{version}
         body (dict), occasionally requires manual json.dumps()
 
+        Optional parameters
+        --------------------
+        params (dict)
         """
 
         return self._generic('patch', endpoint, body)
 
-    def async_app_copy(self, app_id, copies=1, chunks=10, users=False):
+    def async_app_copy(self, app_id, copies=1, chunks=10, users=[]):
         """
         Description
         --------------------
@@ -306,7 +317,7 @@ class Tenant:
             sem = asyncio.Semaphore(chunks)
 
             async with ClientSession() as session:
-                if users:
+                if len(users) > 0:
                     for user_id in users:
                         for i in range(copies):
                             task = asyncio.ensure_future(
@@ -330,7 +341,7 @@ class Tenant:
         future = asyncio.ensure_future(run(app_id, copies, chunks, users))
         loop.run_until_complete(future)
 
-    def async_delete(self, endpoint, ids=False, chunks=10):
+    def async_delete(self, endpoint, ids=[], chunks=10):
         """
         Description
         --------------------
@@ -366,7 +377,7 @@ class Tenant:
                 return await call(url, session)
 
         async def run(endpoint, ids, chunks):
-            if ids:
+            if len(ids) > 0:
                 url = self.tenant + '/api/v1/' + endpoint + '/'
                 tasks = []
 
@@ -388,8 +399,8 @@ class Tenant:
         future = asyncio.ensure_future(run(endpoint, ids, chunks))
         loop.run_until_complete(future)
 
-    def async_post(self, endpoint, payloads=False, replace_char=False,
-                   replace_ids=False, chunks=10):
+    def async_post(self, endpoint, payloads=[], replace_char='',
+                   replace_ids=[], chunks=10):
         """
         Description
         --------------------
@@ -442,8 +453,8 @@ class Tenant:
         return self._async_generic('post', endpoint, payloads, replace_char,
                                    replace_ids, chunks)
 
-    def async_put(self, endpoint, payloads=False, replace_char=False,
-                  replace_ids=False, chunks=10):
+    def async_put(self, endpoint, payloads=[], replace_char='',
+                  replace_ids=[], chunks=10):
         """
         Description
         --------------------
@@ -460,8 +471,8 @@ class Tenant:
         return self._async_generic('put', endpoint, payloads, replace_char,
                                    replace_ids, chunks)
 
-    def async_patch(self, endpoint, payloads=False, replace_char=False,
-                    replace_ids=False, chunks=10):
+    def async_patch(self, endpoint, payloads=[], replace_char='',
+                    replace_ids=[], chunks=10):
         """
         Description
         --------------------
@@ -501,10 +512,10 @@ class Tenant:
 
         async def run(method, endpoint, payloads, replace_char, replace_ids,
                       chunks):
-            if payloads:
-                if replace_char and replace_ids:
+            if len(payloads) > 0:
+                if len(replace_char) > 0 and len(replace_ids) > 0:
                     fill_urls = True
-                elif any([replace_char, replace_ids]):
+                elif any([len(replace_char) > 0, len(replace_ids) > 0]):
                     raise Exception(
                         'both replace_char and replace_ids must be present')
                 else:
@@ -518,10 +529,9 @@ class Tenant:
                     if fill_urls:
                         if len(replace_ids) == len(payloads):
                             for idx, element_id in enumerate(replace_ids):
-                                endpoint = endpoint.replace(
+                                new_endpoint = endpoint.replace(
                                     replace_char, element_id)
-                                url = self.tenant + '/api/v1/' + endpoint
-
+                                url = self.tenant + '/api/v1/' + new_endpoint
                                 task = asyncio.ensure_future(
                                     bound_call(sem, method, url, session,
                                                payloads[idx]))
@@ -552,7 +562,7 @@ class Tenant:
                                            replace_char, replace_ids, chunks))
         loop.run_until_complete(future)
 
-    def _generic_request(self, s, method, endpoint, body, json=False):
+    def _generic_request(self, s, method, endpoint, body, params, json=False):
         """
         Description
         --------------------
@@ -560,13 +570,15 @@ class Tenant:
         """
         func = 's.' + method
         if not json:
-            r = eval(func)(self.tenant + '/api/v1/' + endpoint, data=body)
+            r = eval(func)(self.tenant + '/api/v1/' + endpoint,
+                           params=params, data=body)
         else:
-            r = eval(func)(self.tenant + '/api/v1/' + endpoint, json=body)
+            r = eval(func)(self.tenant + '/api/v1/' +
+                           endpoint, params=params, json=body)
 
         return r
 
-    def _generic(self, method, endpoint, body):
+    def _generic(self, method, endpoint, body, params):
         """
         Description
         --------------------
@@ -578,19 +590,21 @@ class Tenant:
         s = requests.Session()
         s.headers.update(self.auth_header)
 
-        r = self._generic_request(s, method, endpoint, body)
+        r = self._generic_request(s, method, endpoint, body, params)
 
         if r.status_code == 400:
             flag_400 = True
             body = [body]
             s.headers.update({'Content-Type': 'application/json',
                               'Accept': 'application/json'})
-            r = self._generic_request(s, method, endpoint, body, json=True)
+            r = self._generic_request(
+                s, method, endpoint, body, params, json=True)
 
             if r.status_code == 500:
                 flag_500 = True
                 body = json.dumps(body[0])
-                r = self._generic_request(s, method, endpoint, body)
+                r = self._generic_request(s, method, endpoint, body,
+                                          params)
 
             elif r.status_code == 400:
                 raise Exception(r.status_code, r.text)
@@ -598,7 +612,8 @@ class Tenant:
         if r.status_code == 500:
             flag_500 = True
             body = json.dumps(body)
-            r = self._generic_request(s, method, endpoint, body)
+            r = self._generic_request(s, method, endpoint, body,
+                                      params)
 
         if r.status_code >= 200 and r.status_code < 300:
             try:
