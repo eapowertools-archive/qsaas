@@ -31,11 +31,16 @@ class Tenant:
 
     Example Usage
     --------------------
-       tenant1 = qsaas.Tenant(api_key_1, tenant_1, tenant_id_1)
-       tenant2 = qsaas.Tenant(api_key_2, tenant_2, tenant_id_2)
+        Option 1:
+        q = Tenant(config="<file>.json")
 
-       tenant1.get('users') -> Returns users from tenant 1
-       tenant2.get('users') -> Returns users from tenant 2
+        Option 2:
+        q = Tenant(api_key=<key>, tenant=<tenant>, tenant_id=<id>)
+
+        Multiple tenants:
+        q_us = Tenant(config="us.json")
+        q_emea = Tenant(config="emea.json")
+        q_apac = Tenant(config="apac.json")
     """
 
     def __init__(self, api_key=False, tenant=False, tenant_id=False,
