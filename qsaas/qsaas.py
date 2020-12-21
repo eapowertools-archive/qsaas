@@ -246,7 +246,7 @@ class Tenant:
         params (dict)
         """
 
-        return self._generic('patch', endpoint, body)
+        return self._generic('patch', endpoint, body, params)
 
     def async_app_copy(self, app_id, copies=1, chunks=10, users=[]):
         """
