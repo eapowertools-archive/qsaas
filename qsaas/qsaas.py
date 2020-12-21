@@ -221,7 +221,7 @@ class Tenant:
                 json.dumps({"ownerId": '<UserId>'}))
         """
 
-        return self._generic('put', endpoint, body)
+        return self._generic('put', endpoint, body, params)
 
     def patch(self, endpoint, body, params={}):
         """
