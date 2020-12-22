@@ -91,6 +91,20 @@ body = {
 }
 q.post('users', body)
 ```
+#### Reload an application
+```
+reload = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))
+```
+#### Reload an application and wait
+```
+reload = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))
+
+reload_id, status = reload['id'], reload['status']
+
+while status not in ['SUCCEEDED', 'FAILED']:
+    time.sleep(1)
+    status = q.get('reloads/' + reload_id)['status']
+```
 #### Publish an application
 ```
 app_id = <APP_ID>
