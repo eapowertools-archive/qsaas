@@ -104,7 +104,7 @@ class Tenant:
         try:
             r = s.get(self.tenant + '/api/v1/' + endpoint, params=params)
             if r.status_code == 200:
-                result = r.json()['data']
+                result = r.json()['data'] if 'data' in r.json() else r.json()
                 try:
                     starting_after = re.findall(
                         next_re, r.json()['links']['next']['href'])[0]
@@ -156,7 +156,7 @@ class Tenant:
         s = requests.Session()
         s.headers.update(self.auth_header)
         r = s.delete(self.tenant + '/api/v1/' + endpoint)
-        if r.status_code >= 200 and r.status_code < 300:
+        if r.status_code in range(200, 300):
             try:
                 result = r.json()
             except json.decoder.JSONDecodeError:
@@ -620,7 +620,7 @@ class Tenant:
             r = self._generic_request(s, method, endpoint, body,
                                       params)
 
-        if r.status_code >= 200 and r.status_code < 300:
+        if r.status_code in range(200, 300):
             try:
                 result = r.json()
             except json.decoder.JSONDecodeError:
