@@ -137,11 +137,10 @@ q.async_post('apps/import', payloads=payloads)
 #### Asynchronously delete apps that have the name "delete_me"
 _Note:_ This process currently requires deleting both from the `apps` and `items` endpoints. The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
 ```python
-items = q.get('items', params={"resourceType": "app"})
-delete_items = [item for item in items if item['name'] == 'delete_me']
+items = q.get('items', params={"resourceType": "app", "name": "delete_me"})
 delete_dict = {}
-delete_dict['items'] = [item['id'] for item in delete_items]
-delete_dict['apps'] = [item['resourceId'] for item in delete_items]
+delete_dict['items'] = [item['id'] for item in items]
+delete_dict['apps'] = [item['resourceId'] for item in items]
 for e in delete_dict:
     q.async_delete(e, ids=delete_dict[e])
 ```
