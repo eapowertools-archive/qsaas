@@ -125,13 +125,20 @@ app = q.post('apps/import', data, params={"name": "Test App"})
 ```
 
 # Advanced Usage
-#### Asynchronously import multiple apps
+#### Asynchronously reload multiple applications
+_Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
+```python
+app_ids = ['<APP_ID1>','<APP_ID2>','<APP_ID3>']
+payloads = [json.dumps({"appId": app_id}) for app_id in app_ids]
+q.async_post('reloads', payloads=payloads)
+```
+#### Asynchronously import multiple applications
 _Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
 ```python
 payloads = []
 for app in ['app1', 'app2', 'app3']:
     with open(app + '.qvf', 'rb') as f:
-        apps.append(f.read())
+        payloads.append(f.read())
 q.async_post('apps/import', payloads=payloads)
 ```
 #### Asynchronously delete apps that have the name "delete_me"
