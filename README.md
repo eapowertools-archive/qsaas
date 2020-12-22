@@ -104,11 +104,10 @@ user_id = <USER_ID>
 q.put('apps/' + app_id + '/owner', json.dumps({"ownerId": user_id}))
 ```
 #### Import an application
-_Note:_ Use '\n' for spaces in app names.
 ```
 with open('<NAME>.qvf', 'rb') as f:
     data = f.read()
-app = q.post('apps/import', data, params={"name": "Test\nApp"})
+app = q.post('apps/import', data, params={"name": "Test App"})
 ```
 
 # Advanced Usage

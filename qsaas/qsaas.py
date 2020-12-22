@@ -4,6 +4,7 @@ import json
 from aiohttp import ClientSession
 import asyncio
 import warnings
+import urllib
 
 
 class Tenant:
@@ -576,6 +577,10 @@ class Tenant:
         Private helper function for _generic.
         """
         func = 's.' + method
+        if 'import' in endpoint:
+            params = urllib.parse.urlencode(
+                params, quote_via=urllib.parse.quote)
+
         if not json:
             r = eval(func)(self.tenant + '/api/v1/' + endpoint,
                            params=params, data=body)
