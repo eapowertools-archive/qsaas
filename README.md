@@ -31,18 +31,18 @@ asyncio
 ```
 # Configuration
 To import qsaas, as qsaas only currently has one class, `Tenant`, the simplest way is:
-```
+```python
 from qsaas.qsaas import Tenant
 ```
 
 From there, one can instantiate a new `Tenant` object by executing
-```
+```python
 q = Tenant(<args>)
 ```
 
 ### Option A
 If connecting locally, the simplest way can be to use a json file for each tenant, as these files can be securely stored locally. The file must be a valid json file with the following structure:
-```
+```json
 {
     "api_key": "<API_KEY>",
     "tenant_fqdn": "<TENANT>.<REGION>.qlikcloud.com",
@@ -50,38 +50,38 @@ If connecting locally, the simplest way can be to use a json file for each tenan
 }
 ```
 When creating a new `Tenant` object then, the named param `config` can be used as follows (in this case, the file name is "config.json":
-```
+```python
 q = Tenant(config="config.json")
 ```
 
 ### Option B
 If it's preferred to feed in the api_key, tenant_fqdn, and tenant_id in a different manner, one can instead execute:
-```
+```python
 q = Tenant(api_key=<API_KEY>, tenant=<TENANT_FQDN>, tenant_id=<TENANT_ID>)
 ```
 
 # Basic Usage
 #### Get all users from a tenant and print their IDs
-```
+```python
 users = q.get('users')
 print([user['id'] for user in users)
 ```
 #### Get a specific user from a tenant
-```
+```python
 user = q.get('users', params={"subject":"QLIK-POC\dpi"})
 ```
 #### Get all apps from a tenant and print their names
-```
+```python
 apps = q.get('items', params={"resourceType":"app"})
 for app in apps:
     print(app['name'])
 ```
 #### Get all spaces from a tenant
-```
+```python
 spaces = q.get('spaces')
 ```
 #### Create a new user
-```
+```python
 body = {
     "tenantId": q.tenant_id,
     "subject": 'WORKSHOP\\Qlik1',
@@ -92,11 +92,11 @@ body = {
 q.post('users', body)
 ```
 #### Reload an application
-```
+```python
 reload = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))
 ```
 #### Reload an application and wait
-```
+```python
 reload = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))
 
 reload_id, status = reload['id'], reload['status']
@@ -106,19 +106,19 @@ while status not in ['SUCCEEDED', 'FAILED']:
     status = q.get('reloads/' + reload_id)['status']
 ```
 #### Publish an application
-```
+```python
 app_id = <APP_ID>
 space_id = <SPACE_ID>
 q.post('apps/' + app_id + '/publish', json.dumps({"spaceId": space_id}))
 ```
 #### Change the owner of an application
-```
+```python
 app_id = <APP_ID>
 user_id = <USER_ID>
 q.put('apps/' + app_id + '/owner', json.dumps({"ownerId": user_id}))
 ```
 #### Import an application
-```
+```python
 with open('<NAME>.qvf', 'rb') as f:
     data = f.read()
 app = q.post('apps/import', data, params={"name": "Test App"})
@@ -127,7 +127,7 @@ app = q.post('apps/import', data, params={"name": "Test App"})
 # Advanced Usage
 #### Asynchronously import multiple apps
 _Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
-```
+```python
 payloads = []
 for app in ['app1', 'app2', 'app3']:
     with open(app + '.qvf', 'rb') as f:
@@ -136,7 +136,7 @@ q.async_post('apps/import', payloads=payloads)
 ```
 #### Asynchronously delete apps that have the name "delete_me"
 _Note:_ This process currently requires deleting both from the `apps` and `items` endpoints. The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
-```
+```python
 items = q.get('items', params={"resourceType": "app"})
 delete_items = [item for item in items if item['name'] == 'delete_me']
 delete_dict = {}
@@ -147,7 +147,7 @@ for e in delete_dict:
 ```
 #### Asychronously add users
 _Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
-```
+```python
 payloads = []
 for i in range(10):
     user_subject = 'WORKSHOP\\Qlik' + str(i+1)
@@ -165,7 +165,7 @@ q.async_post('users', payloads=payloads)
 ```
 #### Asynchronously publish applications
 _Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
-```
+```python
 app_ids = ['<APP_ID>', '<APP_ID>']
 space_ids = ['<SPACE_ID>', '<SPACE_ID>']
 payloads = []
@@ -177,11 +177,11 @@ q.async_post('apps/_/publish', replace_ids=app_ids,
 #### Asynchronously copy applications and assign them to new owners
 _Note:_ This is the only "custom" style function in all of qsaas, due to the fact that it has hardcoded endpoints and has an multi-step process--as it can copy applications and then assign those applications ot new owners in one go. The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
 **Copy app and assign ownership to new users**
-```
+```python
 q.async_app_copy('<GUID>',users=['<UserId-1>','<UserId-2>'])
 ```
 **Simply copy an app 10 times, without assigning new ownership**
-```
+```python
 q.async_app_copy('<GUID>',copies=10)
 ```
 
