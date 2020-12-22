@@ -104,7 +104,9 @@ class Tenant:
         try:
             r = s.get(self.tenant + '/api/v1/' + endpoint, params=params)
             if r.status_code == 200:
-                result = r.json()['data'] if 'data' in r.json() else r.json()
+                result = r.json()
+                if 'data' in result:
+                    result = result['data']
                 try:
                     starting_after = re.findall(
                         next_re, r.json()['links']['next']['href'])[0]
