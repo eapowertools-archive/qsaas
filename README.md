@@ -64,7 +64,8 @@ q = Tenant(api_key=<API_KEY>, tenant=<TENANT_FQDN>, tenant_id=<TENANT_ID>)
 #### Get all users from a tenant and print their IDs
 ```python
 users = q.get('users')
-print([user['id'] for user in users)
+for user in users:
+    print(user['id'])
 ```
 #### Get a specific user from a tenant
 ```python
@@ -97,10 +98,8 @@ reload = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))
 ```
 #### Reload an application and wait
 ```python
-reload = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))
-
-reload_id, status = reload['id'], reload['status']
-
+reload_id = q.post('reloads', json.dumps({"appId": "<APP_ID>"}))['id']
+status = None
 while status not in ['SUCCEEDED', 'FAILED']:
     time.sleep(1)
     status = q.get('reloads/' + reload_id)['status']
