@@ -120,6 +120,20 @@ class Tenant:
                     except IndexError:
                         params.clear()
                         return result
+                except KeyError:
+                    try:
+                        starting_after = re.findall(
+                            next_re, r.json()['links']['Next']['Href'])[0]
+                    except IndexError:
+                        try:
+                            next_re = r'(?<=&startingAfter=)(?:(?!&|$).)*'
+                            starting_after = re.findall(
+                                next_re, r.json()['links']['Next']['Href'])[0]
+                            next_name = 'startingAfter'
+                        except IndexError:
+                            params.clear()
+                            return result
+
             else:
                 params.clear()
                 raise Exception(r.status_code, r.text)
@@ -127,13 +141,17 @@ class Tenant:
                 params[next_name] = starting_after
                 r = s.get(self.tenant + '/api/v1/' + endpoint, params=params)
                 result += r.json()['data']
-                starting_after = re.findall(
-                    next_re, r.json()['links']['next']['href'])[0]
+                try:
+                    starting_after = re.findall(
+                        next_re, r.json()['links']['next']['href'])[0]
+                except KeyError:
+                    starting_after = re.findall(
+                        next_re, r.json()['links']['Next']['Href'])[0]
         except KeyError:
             pass
         except TypeError:
             params.clear()
-            return r.json()
+            return result
         s.close()
         params.clear()
         return result
