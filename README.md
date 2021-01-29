@@ -118,9 +118,21 @@ q.put('apps/' + app_id + '/owner', json.dumps({"ownerId": user_id}))
 ```
 #### Import an application
 ```python
-with open('<NAME>.qvf', 'rb') as f:
+with open('<APP-NAME>.qvf', 'rb') as f:
     data = f.read()
-app = q.post('apps/import', data, params={"name": "Test App"})
+app = q.post('apps/import', data,
+             params={"name": "<APP-NAME-NEW>"})
+payload = {
+    "name": app['attributes']['name'],
+    "resourceId": app['attributes']['id'],
+    "description": app['attributes']['description'],
+    "resourceType": "app",
+    "resourceAttributes": app['attributes'],
+    "resourceCustomAttributes": {},
+    "resourceCreatedAt": app['attributes']['createdDate'],
+    "resourceCreatedBySubject": app['attributes']['owner']
+}
+q.post('items', json.dumps(payload))
 ```
 
 # Advanced Usage
@@ -131,15 +143,7 @@ app_ids = ['<APP_ID1>','<APP_ID2>','<APP_ID3>']
 payloads = [json.dumps({"appId": app_id}) for app_id in app_ids]
 q.async_post('reloads', payloads=payloads)
 ```
-#### Asynchronously import multiple applications
-_Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
-```python
-payloads = []
-for app in ['app1', 'app2', 'app3']:
-    with open(app + '.qvf', 'rb') as f:
-        payloads.append(f.read())
-q.async_post('apps/import', payloads=payloads)
-```
+
 #### Asynchronously delete apps that have the name "delete_me"
 _Note:_ This process currently requires deleting both from the `apps` and `items` endpoints. The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
 ```python
