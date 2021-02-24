@@ -319,7 +319,27 @@ class Tenant:
                 response = await resp.text()
                 if resp.status not in range(200, 300):
                     raise Exception(resp.status, response)
-                copied_app_id = json.loads(response)['attributes']['id']
+
+                attributes = json.loads(response)['attributes']
+                copied_app_id = attributes['id']
+                payload = {
+                    "name": attributes['name'],
+                    "resourceId": attributes['id'],
+                    "description": attributes['description'],
+                    "resourceType": "app",
+                    "resourceAttributes": attributes,
+                    "resourceCustomAttributes": {},
+                    "resourceCreatedAt": attributes['createdDate'],
+                    "resourceCreatedBySubject": attributes['owner']
+                }
+
+            async with session.post(url + 'items', data=json.dumps(payload),
+                                    headers=self.auth_header) as resp:
+                response = await resp.text()
+                if resp.status not in range(200, 300):
+                    raise Exception(resp.status, response)
+                return response
+
             if user_id:
                 async with session.put(url + 'apps/' + copied_app_id +
                                        '/owner',
