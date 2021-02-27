@@ -634,7 +634,6 @@ class Tenant:
         --------------------
         Private helper function for post, put, patch.
         """
-
         flag_400 = False
         flag_500 = False
         s = requests.Session()
@@ -642,6 +641,11 @@ class Tenant:
 
         r = self._generic_request(s, method, endpoint, body, params)
 
+        if r.status_code == 415:
+            s.headers.update({'Content-Type': 'application/json',
+                              'Accept': 'application/json'})
+            r = self._generic_request(s, method, endpoint, body,
+                                      params)
         if r.status_code == 400:
             flag_400 = True
             body = [body]
