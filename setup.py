@@ -20,7 +20,7 @@ setup(
     keywords=['Qlik', 'API', 'REST', 'Sense', 'QSAAS', 'QSESAAS'],
     install_requires=[
         'requests',
-        'requests-toolbelt'
+        'requests-toolbelt',
         'aiohttp',
         'asyncio',
     ],
