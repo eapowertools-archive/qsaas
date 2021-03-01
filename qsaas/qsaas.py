@@ -1,5 +1,6 @@
 import re
 import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 import json
 from aiohttp import ClientSession
 import asyncio
@@ -618,7 +619,14 @@ class Tenant:
         if 'import' in endpoint:
             params = urllib.parse.urlencode(
                 params, quote_via=urllib.parse.quote)
-
+        elif 'qix-datafiles' in endpoint and method in ['post', 'put']:
+            try:
+                body = MultipartEncoder(
+                    fields={'Data': (params['name'], body, 'text/plain')}
+                )
+                s.headers.update({'Content-Type': body.content_type})
+            except KeyError:
+                raise Exception('Provide the "name" param')
         if not json:
             r = eval(func)(self.tenant + '/api/v1/' + endpoint,
                            params=params, data=body)
@@ -644,8 +652,7 @@ class Tenant:
         if r.status_code == 415:
             s.headers.update({'Content-Type': 'application/json',
                               'Accept': 'application/json'})
-            r = self._generic_request(s, method, endpoint, body,
-                                      params)
+            r = self._generic_request(s, method, endpoint, body, params)
         if r.status_code == 400:
             flag_400 = True
             body = [body]
@@ -657,8 +664,7 @@ class Tenant:
             if r.status_code == 500:
                 flag_500 = True
                 body = json.dumps(body[0])
-                r = self._generic_request(s, method, endpoint, body,
-                                          params)
+                r = self._generic_request(s, method, endpoint, body, params)
 
             elif r.status_code == 400:
                 raise Exception(r.status_code, r.text)
@@ -666,8 +672,7 @@ class Tenant:
         if r.status_code == 500:
             flag_500 = True
             body = json.dumps(body)
-            r = self._generic_request(s, method, endpoint, body,
-                                      params)
+            r = self._generic_request(s, method, endpoint, body, params)
 
         if r.status_code in range(200, 300):
             try:

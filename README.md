@@ -111,7 +111,19 @@ while status not in ['SUCCEEDED', 'FAILED']:
 ```python
 app_id = <APP_ID>
 space_id = <SPACE_ID>
-q.post('apps/' + app_id + '/publish', json.dumps({"spaceId": space_id}))
+app = q.post('apps/' + app_id + '/publish', json.dumps({"spaceId": space_id}))
+payload = {
+    "name": app['attributes']['name'],
+    "resourceId": app['attributes']['id'],
+    "description": app['attributes']['description'],
+    "resourceType": "app",
+    "resourceAttributes": app['attributes'],
+    "resourceCustomAttributes": {},
+    "resourceCreatedAt": app['attributes']['createdDate'],
+    "resourceCreatedBySubject": app['attributes']['owner'],
+    "spaceId": space_id
+}
+q.post('items', json.dumps(payload))
 ```
 #### Change the owner of an application
 ```python
@@ -139,6 +151,13 @@ q.post('items', json.dumps(payload))
 ```
 
 # Advanced Usage
+#### Upload a file to DataFiles
+```python
+file_path = directory_path + '\\' + file_name
+body = open(file_path, 'rb')
+q.post('qix-datafiles', body,
+        params={"connectionId": conn_id, "name": file_name})
+```
 #### Asynchronously reload multiple applications
 _Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
 ```python
@@ -174,17 +193,6 @@ for i in range(10):
     }
     payloads.append(body)
 q.async_post('users', payloads=payloads)
-```
-#### Asynchronously publish applications
-_Note:_ The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
-```python
-app_ids = ['<APP_ID>', '<APP_ID>']
-space_ids = ['<SPACE_ID>', '<SPACE_ID>']
-payloads = []
-for space_id in space_ids:
-    payloads.append(json.dumps({"spaceId": space_id}))
-q.async_post('apps/_/publish', replace_ids=app_ids,
-             replace_char='_', payloads=payloads)
 ```
 #### Asynchronously copy applications and assign them to new owners
 _Note:_ This is the only "custom" style function in all of qsaas, due to the fact that it has hardcoded endpoints and has an multi-step process--as it can copy applications and then assign those applications ot new owners in one go. The default threading is 10 at a time--to modify this, add the named param `chunks=x`, where x is an integer. Do not make this integer too high to avoid rate limiting.
