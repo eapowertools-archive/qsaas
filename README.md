@@ -29,6 +29,7 @@ pip install qsaas
 #### Dependencies (auto-installed by pip):
 ```
 requests
+requests_toolbelt
 aiohttp
 asyncio
 ```
