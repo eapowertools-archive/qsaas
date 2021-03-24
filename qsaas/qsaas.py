@@ -627,6 +627,10 @@ class Tenant:
                 s.headers.update({'Content-Type': body.content_type})
             except KeyError:
                 raise Exception('Provide the "name" param')
+        elif method in ['post', 'put', 'patch']:
+            s.headers.update({'Content-Type': 'application/json',
+                              'Accept': 'application/json'})
+
         if not json:
             r = eval(func)(self.tenant + '/api/v1/' + endpoint,
                            params=params, data=body)
@@ -649,15 +653,10 @@ class Tenant:
 
         r = self._generic_request(s, method, endpoint, body, params)
 
-        if r.status_code == 415:
-            s.headers.update({'Content-Type': 'application/json',
-                              'Accept': 'application/json'})
-            r = self._generic_request(s, method, endpoint, body, params)
         if r.status_code == 400:
             flag_400 = True
             body = [body]
-            s.headers.update({'Content-Type': 'application/json',
-                              'Accept': 'application/json'})
+
             r = self._generic_request(
                 s, method, endpoint, body, params, json=True)
 
