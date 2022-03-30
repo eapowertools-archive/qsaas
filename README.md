@@ -94,7 +94,7 @@ body = {
     "email": 'Qlik1@workshop.com',
     "status": "active"
 }
-q.post('users', body)
+q.post('users', json.dumps(body))
 ```
 #### Reload an application
 ```python
@@ -192,7 +192,7 @@ for i in range(10):
         "email": user_email,
         "status": "active"
     }
-    payloads.append(body)
+    payloads.append(json.dumps(body))
 q.async_post('users', payloads=payloads)
 ```
 #### Asynchronously copy applications and assign them to new owners
